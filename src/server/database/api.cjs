@@ -13,8 +13,8 @@ api.use(require('body-parser').urlencoded({ extended: true }));
 
 api.post("/person/create", (req, res) => {
     try {
-        const { username, first_name, second_name, slack_username } = req.body;
-        const result = addPerson(username, first_name, second_name, slack_username);
+        const { username, first_name, second_name, email } = req.body;
+        const result = addPerson(username, first_name, second_name, email);
         res.json({result});
     } catch (e) {
         res.status(500).json({error: e.message});

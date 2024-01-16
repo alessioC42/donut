@@ -17,9 +17,9 @@
           label="Second name"
       ></v-text-field>
       <v-text-field
-          v-model="slackUsername"
+          v-model="email"
           :rules="rules"
-          label="Slack Username"
+          label="E-Mail"
       ></v-text-field>
       <v-btn type="submit" block class="mt-2">Submit</v-btn>
     </v-form>
@@ -32,7 +32,7 @@ export default {
     userName: '',
     firstName: '',
     secondName: '',
-    slackUsername: '',
+    email: '',
     rules: [
       value => value!== '' ? true : 'Field is required.',
     ],
@@ -43,7 +43,7 @@ export default {
       formData.append('username', this.userName);
       formData.append('first_name', this.firstName);
       formData.append('second_name', this.secondName);
-      formData.append('slack_username', this.slackUsername);
+      formData.append('email', this.email);
 
       fetch('http://localhost:3000/api/person/create', {
         method: 'POST',
@@ -53,7 +53,9 @@ export default {
         body: formData,
       })
       .then(response => response.json())
-      .then(data => {console.log(data); alert(data)})
+      .then(data => {
+        this.$router.push('/persons');
+      })
       .catch((error) => {
         console.error('Error:', error);
       });

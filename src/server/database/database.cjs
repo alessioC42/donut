@@ -4,7 +4,7 @@ const path = require('path');
 const db = require('better-sqlite3')(path.join(__dirname, "/database.db"), {fileMustExist: true});
 
 const querys = {
-    "addPerson": db.prepare("INSERT INTO Persons (username, first_name, second_name, slack_username, created_at) VALUES ($username, $first_name, $second_name, $slack_username, $created_at)"),
+    "addPerson": db.prepare("INSERT INTO Persons (username, first_name, second_name, email, created_at) VALUES ($username, $first_name, $second_name, $email, $created_at)"),
     "getUserByID": db.prepare("SELECT * FROM Persons WHERE id=$id"),
     "deleteUserByID": db.prepare("DELETE FROM Persons WHERE id=$id"),
     
@@ -14,10 +14,10 @@ const querys = {
 
 
 
-function addPerson(username, first_name, second_name, slack_username) {
+function addPerson(username, first_name, second_name, email) {
     const created_at = (new Date()).toLocaleDateString();
         
-    return querys["addPerson"].run({username, first_name, second_name, slack_username, created_at});
+    return querys["addPerson"].run({username, first_name, second_name, email, created_at});
 }
 
 function getPersonByID(id) {

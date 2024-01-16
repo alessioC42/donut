@@ -26,7 +26,7 @@ const vuetify = createVuetify({
     defaultTheme: 'light',
     components,
     directives,
-  });
+});
 
 const app = createApp(App);
 app.use(router);
