@@ -21,7 +21,8 @@ const querys = {
                                       WHERE Matches.matching_run = $id;`),
 
     "addWorkspace": db.prepare("INSERT INTO Workspaces (name, description, created_at) VALUES ($name, $description, $created_at)"),
-    "getAllWorkSpaces": db.prepare("SELECT * FROM Workspaces;")
+    "getAllWorkSpaces": db.prepare("SELECT * FROM Workspaces;"),
+    "getWorkSpaceByID": db.prepare("SELECT * FROM Workspaces WHERE id=$id"),
 }
 
 function getDate() {
@@ -63,10 +64,28 @@ function addWorkspace(name, description) {
     return querys["addWorkspace"].run({name, description, created_at: getDate()});
 }
 
-function getAllWorkSpaces() {
-    return querys["getAllWorkSpaces"].all();
+function getAllWorkSpaces(id=undefined) {
+    if (id) {
+        return querys["getWorkSpaceByID"].get({id});
+    } else {
+        return querys["getAllWorkSpaces"].all();
+    }
 }
 
+function getWorkSpacePersonsByPage(id, resultsPerPage, page) {
+    const offset = (page - 1) * resultsPerPage;
+
+    let sql = `SELECT Persons.* 
+                FROM Person_in_workspace 
+                LEFT JOIN Persons ON Person_in_workspace.person = Persons.id
+                WHERE Person_in_workspace.workspace = $id
+               LIMIT $resultsPerPage OFFSET $offset`;
+
+    let stmt = db.prepare(sql);
+    const results = stmt.all({id, resultsPerPage, offset});
+
+    return {results, count: 1};
+}
 
 module.exports = {
     addPerson,
@@ -76,5 +95,6 @@ module.exports = {
     getMatchingRuns,
     getAllMatchesOfRun,
     addWorkspace,
-    getAllWorkSpaces
+    getAllWorkSpaces,
+    getWorkSpacePersonsByPage,
 }

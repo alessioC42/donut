@@ -7,7 +7,7 @@
             <v-card-title>{{ donut.name }}</v-card-title>
             <v-card-text>
               <p>{{ donut.description }}</p>
-              <p>Price: {{ donut.created_at }}</p>
+              <p>{{ donut.created_at }}</p>
             </v-card-text>
           </v-card>
         </v-col>

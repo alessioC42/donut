@@ -16,6 +16,7 @@ import AllDonutsOverview from './views/donuts/AllDonutsOverview.vue';
 import SingleDonut from './views/donuts/SingeDonut.vue';
 import AllWorkspacesOverview from './views/workspaces/AllWorkspacesOverview.vue';
 import CreateWorkspace from './views/workspaces/CreateWorkSpace.vue';
+import WorkspaceOverview from './views/workspaces/WorkspaceOverview.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -27,7 +28,7 @@ const router = createRouter({
         { path: "/donuts", component: AllDonutsOverview},
         { path: "/donut/:id", component: SingleDonut},
         { path: "/workspaces", component: AllWorkspacesOverview},
-        { path: "/workspaces/:id", component: AllWorkspacesOverview},
+        { path: "/workspaces/:id", component: WorkspaceOverview},
         { path: "/workspaces/new", component: CreateWorkspace},
     ]
 });

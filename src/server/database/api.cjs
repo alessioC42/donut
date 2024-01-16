@@ -6,7 +6,8 @@ const {
     getMatchingRuns,
     getAllMatchesOfRun,
     addWorkspace,
-    getAllWorkSpaces
+    getAllWorkSpaces,
+    getWorkSpacePersonsByPage,
 } = require("./database.cjs");
 
 
@@ -52,6 +53,15 @@ api.get("/donut/:id", (req, res) => {
 
 api.get("/workspaces", (req, res) => {
     res.json(getAllWorkSpaces());
+});
+
+api.get("/workspaces/:id", (req, res) => {
+    res.json(getAllWorkSpaces(req.params.id));
+});
+
+api.get("/workspaces/members/:id", (req, res) => {
+    const { itemsPerPage, page } = req.query;
+    res.json(getWorkSpacePersonsByPage(req.params.id, itemsPerPage, page));
 });
 
 api.post("/workspaces/create", (req, res) => {

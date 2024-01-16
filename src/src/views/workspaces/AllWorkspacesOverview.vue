@@ -1,4 +1,8 @@
 <template>
+  <router-link to="/workspaces/create">
+    <v-btn color="primary" class="mb-2">Create Workspace</v-btn>
+  </router-link>
+  <v-divider style="margin: 10px;"></v-divider>
     <div>
       <v-progress-linear v-if="loading" indeterminate></v-progress-linear>
       <v-row v-else>
@@ -7,7 +11,7 @@
             <v-card-title>{{ workspace.name }}</v-card-title>
             <v-card-text>
               <p>{{ workspace.description }}</p>
-              <p>Price: {{ workspace.created_at }}</p>
+              <p>{{ workspace.created_at }}</p>
             </v-card-text>
           </v-card>
         </v-col>
