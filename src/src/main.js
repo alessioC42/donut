@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import '@mdi/font/css/materialdesignicons.css';
 
 //vuetify
 import 'vuetify/styles'
@@ -14,18 +15,13 @@ import App from './App.vue';
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        {
-            path: "/",
-            component: Home
-        },
-        {
-            path: "/create-user",
-            component: CreateUser
-        }
+        { path: "/",  component: Home },
+        { path: "/create-user", component: CreateUser }
     ]
 });
 
 const vuetify = createVuetify({
+    defaultTheme: 'light',
     components,
     directives,
   });
