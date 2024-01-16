@@ -2,7 +2,11 @@ const {
     addPerson,
     getPersonByID,
     deletePersonByID,
-    getPersonsByPage
+    getPersonsByPage,
+    getMatchingRuns,
+    getAllMatchesOfRun,
+    addWorkspace,
+    getAllWorkSpaces
 } = require("./database.cjs");
 
 
@@ -36,5 +40,22 @@ api.get("/persons", (req, res) => {
     res.json(getPersonsByPage(itemsPerPage, page));
 });
 
+
+
+api.get("/donuts", (req, res) => {
+    res.json(getMatchingRuns());
+});
+
+api.get("/donut/:id", (req, res) => {
+    res.json(getAllMatchesOfRun(req.params.id));
+});
+
+api.get("/workspaces", (req, res) => {
+    res.json(getAllWorkSpaces());
+});
+
+api.post("/workspaces/create", (req, res) => {
+    res.json(addWorkspace(req.body.name, req.body.description));
+});
 
 module.exports = api;

@@ -12,13 +12,23 @@ import Home from './views/Home.vue';
 import App from './App.vue';
 import CreateUser from './views/persons/CreatePerson.vue';
 import PersonsOverview from './views/persons/PersonsOverview.vue';
+import AllDonutsOverview from './views/donuts/AllDonutsOverview.vue';
+import SingleDonut from './views/donuts/SingeDonut.vue';
+import AllWorkspacesOverview from './views/workspaces/AllWorkspacesOverview.vue';
+import CreateWorkspace from './views/workspaces/CreateWorkSpace.vue';
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
         { path: "/",  component: Home },
+        { path: "/home",  component: Home },
         { path: "/persons", component: PersonsOverview},
-        { path: "/persons/new", component: CreateUser }
+        { path: "/persons/new", component: CreateUser },
+        { path: "/donuts", component: AllDonutsOverview},
+        { path: "/donut/:id", component: SingleDonut},
+        { path: "/workspaces", component: AllWorkspacesOverview},
+        { path: "/workspaces/:id", component: AllWorkspacesOverview},
+        { path: "/workspaces/new", component: CreateWorkspace},
     ]
 });
 
