@@ -8,15 +8,17 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
-import CreateUser from './views/CreateUser.vue';
 import Home from './views/Home.vue';
 import App from './App.vue';
+import CreateUser from './views/persons/CreatePerson.vue';
+import PersonsOverview from './views/persons/PersonsOverview.vue';
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
         { path: "/",  component: Home },
-        { path: "/create-user", component: CreateUser }
+        { path: "/persons", component: PersonsOverview},
+        { path: "/persons/new", component: CreateUser }
     ]
 });
 

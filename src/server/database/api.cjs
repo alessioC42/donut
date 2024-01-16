@@ -1,7 +1,8 @@
 const { 
     addPerson,
     getPersonByID,
-    deletePersonByID
+    deletePersonByID,
+    getPersonsByPage
 } = require("./database.cjs");
 
 
@@ -26,6 +27,13 @@ api.get("/person/:id", (req, res) => {
 
 api.delete("/person/:id", (req, res) => {
     res.json(deletePersonByID(req.params.id));
+});
+
+
+
+api.get("/persons", (req, res) => {
+    const { itemsPerPage, page } = req.query;
+    res.json(getPersonsByPage(itemsPerPage, page));
 });
 
 
