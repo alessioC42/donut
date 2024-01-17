@@ -11,19 +11,22 @@ const {
     getPersonWorkspaceRelations,
     updatePersonByID,
     updateAllPersonWorkspaceRelations
-} = require("./database.cjs");
+} = require("./database/database.cjs");
 
-
+const fs = require("fs");
+const path = require("path");
 const { Router } = require("express");
 const api = Router();
-api.use(require('body-parser').urlencoded({ extended: true }));
 
+//load all random generated names from file
+const randomTeamNames = fs.readFileSync(path.join(__dirname, "./randomWorkspaces/randomWorkspaces.txt"), "utf-8").split("\n");
+
+api.use(require('body-parser').urlencoded({ extended: true }));
 
 api.post("/person/create", (req, res) => {
     const { username, first_name, second_name, email } = req.body;
     const result = addPerson(username, first_name, second_name, email);
     res.json({result});
-    res.status(500).json({error: e.message});
 });
 
 api.post("/person/update/:id", (req, res) => {
@@ -80,6 +83,10 @@ api.get("/workspaces/members/:id", (req, res) => {
 
 api.post("/workspaces/create", (req, res) => {
     res.json(addWorkspace(req.body.name, req.body.description));
+});
+
+api.get("/workspace/random", (req, res) => {
+    res.send(randomTeamNames[Math.floor(Math.random() * randomTeamNames.length)]);
 });
 
 module.exports = api;

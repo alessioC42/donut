@@ -12,10 +12,8 @@ import Home from './views/Home.vue';
 import App from './App.vue';
 import CreateUser from './views/persons/CreatePerson.vue';
 import PersonsOverview from './views/persons/PersonsOverview.vue';
-import AllDonutsOverview from './views/donuts/AllDonutsOverview.vue';
-import SingleDonut from './views/donuts/SingeDonut.vue';
 import AllWorkspacesOverview from './views/workspaces/AllWorkspacesOverview.vue';
-import CreateWorkspace from './views/workspaces/CreateWorkSpace.vue';
+import CreateWorkspace from './views/workspaces/CreateworkSpace.vue';
 import WorkspaceOverview from './views/workspaces/WorkspaceOverview.vue';
 import ManagePerson from "./views/persons/ManagePerson.vue";
 
@@ -27,8 +25,6 @@ const router = createRouter({
         { path: "/persons", component: PersonsOverview},
         { path: "/persons/new", component: CreateUser },
         { path: "/persons/manage/:id", component: ManagePerson },
-        { path: "/donuts", component: AllDonutsOverview},
-        { path: "/donut/:id", component: SingleDonut},
         { path: "/workspaces", component: AllWorkspacesOverview},
         { path: "/workspaces/:id", component: WorkspaceOverview},
         { path: "/workspaces/new", component: CreateWorkspace},

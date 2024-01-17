@@ -29,6 +29,9 @@
         },
       ],
     }),
+    mounted() {
+      this.loadRandomName();
+    },
     methods: {
       submitform() {
         const formData = new URLSearchParams();
@@ -51,6 +54,10 @@
           console.error('Error:', error);
         });
       },
+      async loadRandomName() {
+        const response = await fetch("http://localhost:3000/api/workspace/random");
+        this.workSpaceName = await response.text();
+      }
     },
   }
   </script>
