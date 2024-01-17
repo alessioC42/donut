@@ -54,7 +54,7 @@ export default {
             })
         },
         editItem(item) {
-            console.log(item);
+            this.$router.push('/persons/manage/' + item.id);
         },
         deleteItem(item) {
         if (window.confirm('Are you sure you want to delete this user?')) {

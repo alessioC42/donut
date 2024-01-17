@@ -8,6 +8,9 @@ const {
     addWorkspace,
     getAllWorkSpaces,
     getWorkSpacePersonsByPage,
+    getPersonWorkspaceRelations,
+    updatePersonByID,
+    updateAllPersonWorkspaceRelations
 } = require("./database.cjs");
 
 
@@ -17,17 +20,28 @@ api.use(require('body-parser').urlencoded({ extended: true }));
 
 
 api.post("/person/create", (req, res) => {
-    try {
-        const { username, first_name, second_name, email } = req.body;
-        const result = addPerson(username, first_name, second_name, email);
-        res.json({result});
-    } catch (e) {
-        res.status(500).json({error: e.message});
-    }
+    const { username, first_name, second_name, email } = req.body;
+    const result = addPerson(username, first_name, second_name, email);
+    res.json({result});
+    res.status(500).json({error: e.message});
+});
+
+api.post("/person/update/:id", (req, res) => {
+    const id = req.params.id;
+    const { first_name, second_name, email } = req.body;
+
+    const personResult = updatePersonByID(id, first_name, second_name, email);
+
+    updateAllPersonWorkspaceRelations(id, JSON.parse(req.body.workspaces));
+
+    res.json({personResult});
 });
 
 api.get("/person/:id", (req, res) => {
-    res.json(getPersonByID(req.params.id));
+    res.json({
+        person: getPersonByID(req.params.id),
+        workspaces: getPersonWorkspaceRelations(req.params.id),
+    });
 });
 
 api.delete("/person/:id", (req, res) => {

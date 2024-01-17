@@ -17,6 +17,7 @@ import SingleDonut from './views/donuts/SingeDonut.vue';
 import AllWorkspacesOverview from './views/workspaces/AllWorkspacesOverview.vue';
 import CreateWorkspace from './views/workspaces/CreateWorkSpace.vue';
 import WorkspaceOverview from './views/workspaces/WorkspaceOverview.vue';
+import ManagePerson from "./views/persons/ManagePerson.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -25,6 +26,7 @@ const router = createRouter({
         { path: "/home",  component: Home },
         { path: "/persons", component: PersonsOverview},
         { path: "/persons/new", component: CreateUser },
+        { path: "/persons/manage/:id", component: ManagePerson },
         { path: "/donuts", component: AllDonutsOverview},
         { path: "/donut/:id", component: SingleDonut},
         { path: "/workspaces", component: AllWorkspacesOverview},
