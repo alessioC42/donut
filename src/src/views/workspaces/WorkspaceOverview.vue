@@ -22,6 +22,7 @@ export default {
     workspaceDescription: '',
     itemsPerPage: 10,
     headers: [
+        { title: "paused", key: "is_paused", align: "start", sortable: false, },
         { title: 'username', align: 'start', key: 'username', sortable: false, },
         { title: 'First Name', key: 'first_name', align: 'end', sortable: false },
         { title: 'Second Name', key: 'second_name', align: 'end', sortable: false },
@@ -41,6 +42,9 @@ export default {
             this.loading = true
             fetch(`http://localhost:3000/api/workspaces/members/${ this.$route.params.id }?page=${page}&itemsPerPage=${itemsPerPage}`).then((response) => {
             response.json().then((data) => {
+              for (let i = 0; i < data.results.length; i++) {
+                data.results[i].is_paused = data.results[i].is_paused ? 'Yes' : 'No';
+              }
                 this.serverItems = data.results
                 this.totalItems = data.count
                 this.loading = false
