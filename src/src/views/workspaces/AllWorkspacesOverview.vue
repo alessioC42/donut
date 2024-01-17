@@ -1,6 +1,8 @@
 <template>
-  <router-link to="/workspaces/create">
-    <v-btn color="primary" class="mb-2">Create Workspace</v-btn>
+  <router-link to="/workspaces/new" tag="button">
+    <v-btn color="primary" dark>
+      Create Workspace
+    </v-btn>
   </router-link>
   <v-divider style="margin: 10px;"></v-divider>
     <div>
