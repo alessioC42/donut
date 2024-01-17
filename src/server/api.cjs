@@ -13,9 +13,13 @@ const {
     updateAllPersonWorkspaceRelations
 } = require("./database/database.cjs");
 
+
+
 const fs = require("fs");
 const path = require("path");
 const { Router } = require("express");
+const match = require("nodemon/lib/monitor/match.js");
+const {matchAll} = require("./matcher/matcher.cjs");
 const api = Router();
 
 //load all random generated names from file
@@ -87,6 +91,10 @@ api.post("/workspaces/create", (req, res) => {
 
 api.get("/workspace/random", (req, res) => {
     res.send(randomTeamNames[Math.floor(Math.random() * randomTeamNames.length)]);
+});
+
+api.get("/workspaces/match/:id", (req, res) => {
+    res.json(matchAll(req.params.id));
 });
 
 module.exports = api;

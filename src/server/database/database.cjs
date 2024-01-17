@@ -40,6 +40,7 @@ const querys = {
     "addWorkspace": db.prepare("INSERT INTO Workspaces (name, description, created_at) VALUES ($name, $description, $created_at)"),
     "getAllWorkSpaces": db.prepare("SELECT * FROM Workspaces;"),
     "getWorkSpaceByID": db.prepare("SELECT * FROM Workspaces WHERE id=$id"),
+    "getWorkSpacePersons": db.prepare("SELECT Persons.*, Person_in_workspace.is_paused FROM Person_in_workspace LEFT JOIN Persons ON Person_in_workspace.person = Persons.id WHERE Person_in_workspace.workspace = $id"),
     "getWorkSpacePersonsByPage": db.prepare("SELECT Persons.*, Person_in_workspace.is_paused FROM Person_in_workspace LEFT JOIN Persons ON Person_in_workspace.person = Persons.id WHERE Person_in_workspace.workspace = $id LIMIT $resultsPerPage OFFSET $offset"),
     "addOrUpdatePersonWorkspaceRelation": db.prepare("INSERT OR REPLACE INTO Person_in_workspace (person, workspace, is_paused) VALUES ($person, $workspace, $is_paused);"),
     "deletePersonWorkspaceRelation": db.prepare("DELETE FROM Person_in_workspace WHERE person=$person AND workspace=$workspace"),
@@ -104,6 +105,10 @@ function getAllWorkSpaces(id=undefined) {
     }
 }
 
+function getWorkSpacePersons(id) {
+    return querys["getWorkSpacePersons"].all({id});
+}
+
 function getWorkSpacePersonsByPage(id, resultsPerPage, page) {
     const offset = (page - 1) * resultsPerPage;
     
@@ -128,5 +133,6 @@ module.exports = {
     getWorkSpacePersonsByPage,
     getPersonWorkspaceRelations,
     updatePersonByID,
-    updateAllPersonWorkspaceRelations
+    updateAllPersonWorkspaceRelations,
+    getWorkSpacePersons
 }
