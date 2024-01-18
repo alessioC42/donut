@@ -1,0 +1,8 @@
+{
+  "NYLAS_CLIENT_ID": "------------",
+  "NYLAS_CLIENT_SECRET": "-------------",
+  "NYLAS_API_SERVER": "https://api.nylas.com",
+  "NYLAS_ACCESS_TOKEN": "----------------",
+  "MAIL_DEBUG": "true",
+  "MAIL_DEBUG_ADDRESS": "----------------"
+}

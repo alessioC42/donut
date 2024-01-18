@@ -94,7 +94,9 @@ api.get("/workspace/random", (req, res) => {
 });
 
 api.get("/workspaces/match/:id", (req, res) => {
-    res.json(matchAll(req.params.id));
+    const matches = matchAll(req.params.id);
+
+    res.json(matches);
 });
 
 module.exports = api;
