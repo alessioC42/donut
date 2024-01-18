@@ -36,6 +36,11 @@ const querys = {
     "getDonutsForWorkspaceByPage": db.prepare(`SELECT M.id AS match_id, P0.username AS person0_username, P0.first_name AS person0_first_name, P0.second_name AS person0_last_name, P1.username AS person1_username, P1.first_name AS person1_first_name, P1.second_name AS person1_last_name, P2.username AS person2_username, P2.first_name AS person2_first_name, P2.second_name AS person2_last_name, M.created_at, M.workspace FROM Matches M JOIN Persons P0 ON M.person0 = P0.id JOIN Persons P1 ON M.person1 = P1.id LEFT JOIN Persons P2 ON M.person2 = P2.id WHERE M.workspace = $workspace ORDER BY M.id DESC LIMIT $resultsPerPage OFFSET $offset;`),
     "getDonutsForWorkspaceCount": db.prepare("SELECT COUNT(*) FROM Matches WHERE workspace=$workspace"),
     "deletePersonWorkspaceRelation": db.prepare("DELETE FROM Person_in_workspace WHERE person=$person AND workspace=$workspace"),
+    "deleteAllPersonWorkspaceRelationsByWorkspace": db.prepare("DELETE FROM Person_in_workspace WHERE workspace=$workspace"),
+    "deleteAllPersonWorkspaceRelationsByPerson": db.prepare("DELETE FROM Person_in_workspace WHERE person=$person"),
+    "deleteAllMatchesWithPerson": db.prepare("DELETE FROM Matches WHERE person0=$person OR person1=$person OR person2=$person"),
+    "deleteDonutsOfWorkspaceByID": db.prepare("DELETE FROM Matches WHERE workspace=$workspace"),
+    "deleteWorkSpaceByID": db.prepare("DELETE FROM Workspaces WHERE id=$workspace"),
 }
 
 function getDate() {
@@ -51,6 +56,8 @@ function getPersonByID(id) {
 }
 
 function deletePersonByID(id) {
+    querys["deleteAllPersonWorkspaceRelationsByPerson"].run({person: id});
+    querys["deleteAllMatchesWithPerson"].run({person: id});
     return querys["deletePersonByID"].run({id: id});
 }
 
@@ -135,6 +142,16 @@ function getDonutsForWorkspaceByPage(workspace, resultsPerPage, page) {
     return {results, count: count["COUNT(*)"]};
 }
 
+function deleteDonutsOfWorkspaceByID(workspace) {
+    return querys["deleteDonutsOfWorkspaceByID"].run({workspace});
+}
+
+function deleteWorkSpaceByID(workspace) {
+    deleteDonutsOfWorkspaceByID(workspace);
+    querys["deleteAllPersonWorkspaceRelationsByWorkspace"].run({workspace});
+    return querys["deleteWorkSpaceByID"].run({workspace});
+}
+
 module.exports = {
     addPerson,
     getPersonByID,
@@ -148,5 +165,7 @@ module.exports = {
     updateAllPersonWorkspaceRelations,
     getWorkSpacePersons,
     registerDonut,
-    getDonutsForWorkspaceByPage
+    getDonutsForWorkspaceByPage,
+    deleteDonutsOfWorkspaceByID,
+    deleteWorkSpaceByID
 }

@@ -8,7 +8,7 @@
     style="margin-bottom: 1px;margin-top: 1px;"
   >
     <v-col
-    :hidden="!generateDonutsButtonEnabled"
+    :hidden="!buttonsEnabled"
     >
       <v-btn
           color="primary"
@@ -30,7 +30,7 @@
       </v-btn>
     </v-col>
     <v-col
-    :hidden="generateDonutsButtonEnabled"
+    :hidden="buttonsEnabled"
     >
         <v-progress-circular
             size="50"
@@ -114,7 +114,7 @@ export default {
       ],
       donutTotalItems: 0,
 
-      generateDonutsButtonEnabled: true,
+      buttonsEnabled: true,
     }),
     mounted() {
         this.loadWorkspaceName();
@@ -153,7 +153,7 @@ export default {
           })
       },
       generateDonuts() {
-        this.generateDonutsButtonEnabled = false;
+        this.buttonsEnabled = false;
         fetch(`http://localhost:3000/api/workspaces/match/${ this.$route.params.id }`, {
           method: 'POST',
         }).then((response) => {
@@ -161,15 +161,32 @@ export default {
             console.log(data);
             this.tab = 'donuts';
             this.loadDonuts({ page: 1, itemsPerPage: 10 });
-            this.generateDonutsButtonEnabled = true;
+            this.buttonsEnabled = true;
           })
         })
       },
       deleteDonuts() {
-          //todo
+        this.buttonsEnabled = false;
+        fetch("http://localhost:3000/api/workspaces/donuts/delete/" + this.$route.params.id, {
+          method: 'DELETE',
+        }).then((response) => {
+          response.json().then(() => {
+            this.tab = 'donuts';
+            this.loadDonuts({ page: 1, itemsPerPage: 10 });
+            this.buttonsEnabled = true;
+          })
+        });
       },
       deleteWorkspace() {
-
+        this.buttonsEnabled = false;
+        fetch("http://localhost:3000/api/workspaces/delete/" + this.$route.params.id, {
+          method: 'DELETE',
+        }).then((response) => {
+          response.json().then(() => {
+            this.$router.push('/workspaces');
+            this.buttonsEnabled = true;
+          })
+        });
       }
     },
 }

@@ -11,6 +11,8 @@ const {
     updateAllPersonWorkspaceRelations,
     registerDonut,
     getDonutsForWorkspaceByPage,
+    deleteDonutsOfWorkspaceByID,
+    deleteWorkSpaceByID,
 } = require("./database/database.cjs");
 
 
@@ -111,4 +113,13 @@ api.post("/workspaces/match/:id", async (req, res)  => {
 
     res.json(matches);
 });
+
+api.delete("/workspaces/donuts/delete/:id", (req, res) => {
+    res.json(deleteDonutsOfWorkspaceByID(req.params.id));
+});
+
+api.delete("/workspaces/delete/:id", (req, res) => {
+    res.json(deleteWorkSpaceByID(req.params.id));
+});
+
 module.exports = api;
