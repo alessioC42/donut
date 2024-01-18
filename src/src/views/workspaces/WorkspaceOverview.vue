@@ -3,17 +3,38 @@
     <h2>{{ workspaceName }}</h2>
     <p>{{ workspaceDescription }}</p>
     <v-divider style="margin: 5px;"></v-divider>
-    <v-data-table-server
-        v-model:items-per-page="itemsPerPage"
-        :headers="headers"
-        :items-length="totalItems"
-        :items="serverItems"
-        :loading="loading"
-        :search="search"
-        :disable-sort="true"
-        item-value="name"
-        @update:options="loadItems"
-    ></v-data-table-server>
+
+  <v-card>
+    <v-tabs
+        v-model="tab"
+        bg-color="primary"
+    >
+      <v-tab value="persons">persons</v-tab>
+      <v-tab value="donuts">donuts</v-tab>
+    </v-tabs>
+
+    <v-card-text>
+      <v-window v-model="tab">
+        <v-window-item value="persons">
+          <v-data-table-server
+              v-model:items-per-page="itemsPerPage"
+              :headers="headers"
+              :items-length="totalItems"
+              :items="serverItems"
+              :loading="loading"
+              :search="search"
+              :disable-sort="true"
+              item-value="name"
+              @update:options="loadItems"
+          ></v-data-table-server>
+        </v-window-item>
+
+        <v-window-item value="donuts">
+          donuts
+        </v-window-item>
+      </v-window>
+    </v-card-text>
+  </v-card>
 </template>
 <script>
 export default {
@@ -21,6 +42,7 @@ export default {
     workspaceName: '',
     workspaceDescription: '',
     itemsPerPage: 10,
+      tab: "persons",
     headers: [
         { title: "paused", key: "is_paused", align: "start", sortable: false, },
         { title: 'username', align: 'start', key: 'username', sortable: false, },
@@ -45,9 +67,10 @@ export default {
               for (let i = 0; i < data.results.length; i++) {
                 data.results[i].is_paused = data.results[i].is_paused ? 'Yes' : 'No';
               }
-                this.serverItems = data.results
-                this.totalItems = data.count
-                this.loading = false
+              console.log(data);
+              this.serverItems = data.results
+              this.totalItems = data.count
+              this.loading = false
             })
             })
         },

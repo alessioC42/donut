@@ -3,8 +3,6 @@ const {
     getPersonByID,
     deletePersonByID,
     getPersonsByPage,
-    getMatchingRuns,
-    getAllMatchesOfRun,
     addWorkspace,
     getAllWorkSpaces,
     getWorkSpacePersonsByPage,
@@ -96,7 +94,12 @@ api.get("/workspace/random", (req, res) => {
 api.get("/workspaces/match/:id", async (req, res)  => {
     const matches = matchAll(req.params.id);
     for (const match of matches) {
-        await sendMail(match);
+        try {
+            await sendMail(match);
+        } catch (e) {
+            console.error(e);
+        }
+
     }
 
     res.json(matches);

@@ -26,22 +26,12 @@ const querys = {
 
     "updatePersonByID": db.prepare("UPDATE Persons SET first_name=$first_name, second_name=$second_name, email=$email WHERE id=$id"),
 
-    "getMatchingRuns": db.prepare("SELECT * FROM Matching_runs;"),
-    "getAllMatchesOfRun": db.prepare(
-    `SELECT Matches.id, Matches.person0, Matches.person1, Matches.created_at, Matches.matching_run, 
-        Persons0.username as person0_username, Persons0.first_name as person0_first_name, Persons0.second_name as person0_second_name, Persons0.email as person0_email, Persons0.created_at as person0_created_at,
-        Persons1.username as person1_username, Persons1.first_name as person1_first_name, Persons1.second_name as person1_second_name, Persons1.email as person1_email, Persons1.created_at as person1_created_at
-        FROM Matches
-        JOIN Persons as Persons0 ON Matches.person0 = Persons0.id
-        JOIN Persons as Persons1 ON Matches.person1 = Persons1.id
-        WHERE Matches.matching_run = $id;`
-    ),
-
     "addWorkspace": db.prepare("INSERT INTO Workspaces (name, description, created_at) VALUES ($name, $description, $created_at)"),
     "getAllWorkSpaces": db.prepare("SELECT * FROM Workspaces;"),
     "getWorkSpaceByID": db.prepare("SELECT * FROM Workspaces WHERE id=$id"),
     "getWorkSpacePersons": db.prepare("SELECT Persons.*, Person_in_workspace.is_paused FROM Person_in_workspace LEFT JOIN Persons ON Person_in_workspace.person = Persons.id WHERE Person_in_workspace.workspace = $id"),
     "getWorkSpacePersonsByPage": db.prepare("SELECT Persons.*, Person_in_workspace.is_paused FROM Person_in_workspace LEFT JOIN Persons ON Person_in_workspace.person = Persons.id WHERE Person_in_workspace.workspace = $id LIMIT $resultsPerPage OFFSET $offset"),
+    "getWorkSpacePersonsCount": db.prepare("SELECT COUNT(*) FROM Person_in_workspace WHERE workspace = $id"),
     "addOrUpdatePersonWorkspaceRelation": db.prepare("INSERT OR REPLACE INTO Person_in_workspace (person, workspace, is_paused) VALUES ($person, $workspace, $is_paused);"),
     "deletePersonWorkspaceRelation": db.prepare("DELETE FROM Person_in_workspace WHERE person=$person AND workspace=$workspace"),
 }
@@ -83,14 +73,6 @@ function getPersonsByPage(itemsPerPage, page) {
     return {results, count: cnt["COUNT(*)"]};
 }
 
-function getMatchingRuns() {
-    return querys["getMatchingRuns"].all();
-}
-
-function getAllMatchesOfRun(id) {
-    return querys["getAllMatchesOfRun"].all({id});
-}
-
 
 
 function addWorkspace(name, description) {
@@ -113,8 +95,9 @@ function getWorkSpacePersonsByPage(id, resultsPerPage, page) {
     const offset = (page - 1) * resultsPerPage;
     
     const results = querys["getWorkSpacePersonsByPage"].all({id, resultsPerPage, offset});
+    const count = querys["getWorkSpacePersonsCount"].get({id});
 
-    return {results, count: 1};
+    return {results, count: count["COUNT(*)"]};
 }
 
 function getPersonWorkspaceRelations(id) {
@@ -126,8 +109,6 @@ module.exports = {
     getPersonByID,
     deletePersonByID,
     getPersonsByPage,
-    getMatchingRuns,
-    getAllMatchesOfRun,
     addWorkspace,
     getAllWorkSpaces,
     getWorkSpacePersonsByPage,
