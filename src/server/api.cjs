@@ -18,8 +18,8 @@ const {
 const fs = require("fs");
 const path = require("path");
 const { Router } = require("express");
-const match = require("nodemon/lib/monitor/match.js");
 const {matchAll} = require("./matcher/matcher.cjs");
+const {sendMail} = require("./mailer/mailer.cjs");
 const api = Router();
 
 //load all random generated names from file
@@ -93,8 +93,11 @@ api.get("/workspace/random", (req, res) => {
     res.send(randomTeamNames[Math.floor(Math.random() * randomTeamNames.length)]);
 });
 
-api.get("/workspaces/match/:id", (req, res) => {
+api.get("/workspaces/match/:id", async (req, res)  => {
     const matches = matchAll(req.params.id);
+    for (const match of matches) {
+        await sendMail(match);
+    }
 
     res.json(matches);
 });

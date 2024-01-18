@@ -51,11 +51,12 @@ async function sendMail(match) {
     }
 }
 
-sendMail(
-    [{"id":7,"username":"aethington2","first_name":"Abel","second_name":"Ethington","email":"aethington2@mapquest.com","created_at":"1/17/2024","is_paused":0},
-        {"id":15,"username":"fpolglasea","first_name":"Ferdinande","second_name":"Polglase","email":"fpolglasea@nbcnews.com","created_at":"1/17/2024","is_paused":0}]);
 
 // function to prevent html injections
 function escapeHTML() {
     return this.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+}
+
+module.exports = {
+    sendMail
 }
