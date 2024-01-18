@@ -75,11 +75,23 @@ function updateAllPersonWorkspaceRelations(person, workspaces) {
     });
 }
 
-function getPersonsByPage(itemsPerPage, page) {
+function getPersonsByPage(itemsPerPage, page, search) {
     const offset = (page - 1) * itemsPerPage;
-    const results = querys["getPersonsByPage"].all({itemsPerPage, offset});
-    const cnt = querys["getPersonsCount"].get();
-    return {results, count: cnt["COUNT(*)"]};
+    if (search === "" || search === null || search === undefined) {
+        const results = querys["getPersonsByPage"].all({itemsPerPage, offset});
+        const cnt = querys["getPersonsCount"].get();
+        return {results, count: cnt["COUNT(*)"]};
+    } else {
+        search = "'"+escapeSQL(search+"*")+"'";
+        const getPersonsByPageAndSearch = db.prepare(`SELECT * FROM PersonsFTS WHERE PersonsFTS MATCH ${search} LIMIT $itemsPerPage OFFSET $offset`);
+        const getPersonsByPageAndSearchCount = db.prepare(`SELECT COUNT(*) FROM PersonsFTS WHERE PersonsFTS MATCH ${search}`);
+
+        return {
+            results: getPersonsByPageAndSearch.all({itemsPerPage, offset}),
+            count: getPersonsByPageAndSearchCount.get()["COUNT(*)"]
+        };
+
+    }
 }
 
 
@@ -150,6 +162,10 @@ function deleteWorkSpaceByID(workspace) {
     deleteDonutsOfWorkspaceByID(workspace);
     querys["deleteAllPersonWorkspaceRelationsByWorkspace"].run({workspace});
     return querys["deleteWorkSpaceByID"].run({workspace});
+}
+
+function escapeSQL(str) {
+    return str.replace(/'/g, "");
 }
 
 module.exports = {

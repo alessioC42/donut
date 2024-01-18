@@ -1,7 +1,9 @@
 <template>
     <div class="home">
-        <h1>Welcome to the Home Page</h1>
-        <p>This is a minimal home page using Vue.</p>
+      <h1>Web based donut meeting invitations</h1>
+      <p>Meet new people and have a chat</p>
+
+      <img style="padding-top: 10px;" src="https://i.ibb.co/WDWKkPZ/Donut-10-1999167745.png" alt="Donut Image">
     </div>
 </template>
 

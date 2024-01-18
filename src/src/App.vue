@@ -28,7 +28,7 @@
         <v-list density="compact" nav>
           <v-list-item prepend-icon="mdi-home-city" title="Home" value="home" to="/"></v-list-item>
           <v-list-item prepend-icon="mdi-account-group-outline" title="Persons" value="account" to="/persons"></v-list-item>
-          <v-list-item prepend-icon="mdi-account-group-outline" title="Workspaces" value="workspaces" to="/workspaces"></v-list-item>
+          <v-list-item prepend-icon="mdi-sitemap-outline" title="Workspaces" value="workspaces" to="/workspaces"></v-list-item>
         </v-list>
       </v-navigation-drawer>
       <v-main style="padding-bottom: 20px; padding-top: 20px">

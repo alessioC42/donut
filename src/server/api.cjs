@@ -60,8 +60,8 @@ api.delete("/person/:id", (req, res) => {
 
 
 api.get("/persons", (req, res) => {
-    const { itemsPerPage, page } = req.query;
-    res.json(getPersonsByPage(itemsPerPage, page));
+    const { itemsPerPage, page, search } = req.query;
+    res.json(getPersonsByPage(itemsPerPage, page, search));
 });
 
 

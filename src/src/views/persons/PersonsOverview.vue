@@ -4,7 +4,17 @@
             New Person
         </v-btn>
     </router-link>
-    <v-data-table-server
+    <v-text-field
+        style="padding-top: 10px; padding-bottom: 5px;"
+        v-model="search"
+        label="Search"
+        prepend-inner-icon="mdi-magnify"
+        variant="outlined"
+        hide-details
+    ></v-text-field>
+  <v-divider></v-divider>
+
+  <v-data-table-server
         v-model:items-per-page="itemsPerPage"
         :headers="headers"
         :items-length="totalItems"
@@ -43,9 +53,9 @@ export default {
     totalItems: 0,
     }),
     methods: {
-        loadItems ({ page, itemsPerPage, _sortBy }) {
+        loadItems ({ page, itemsPerPage, search }) {
             this.loading = true
-            fetch(`http://localhost:3000/api/persons?page=${page}&itemsPerPage=${itemsPerPage}`).then((response) => {
+            fetch(`http://localhost:3000/api/persons?page=${page}&itemsPerPage=${itemsPerPage}&search=${search}`).then((response) => {
             response.json().then((data) => {
                 this.serverItems = data.results
                 this.totalItems = data.count
