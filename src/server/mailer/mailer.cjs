@@ -18,43 +18,46 @@ const htmlTemplate = fs.readFileSync(path.join(__dirname, "template.html"), "utf
 
 
 async function sendMail(match) {
-    let userCards = "";
+    if (config.MAIL_DEBUG !== "NONE") {
+        let userCards = "";
 
-    let to = [];
+        let to = [];
 
-    for (const person of match) {
-        console.log(person);
-        let username = escapeHTML(person.username);
-        let email = escapeHTML(person.email);
-        userCards += `<div class="user-card">
-            <h3>${escapeHTML(username)}</h3>
-            <a href="mailto:${(email)}">${email}</a>
-        </div>`
+        for (const person of match) {
+            console.log(person);
+            let username = escapeHTML(person.username);
+            let email = escapeHTML(person.email);
+            userCards += `<div class="user-card">
+                <h3>${escapeHTML(username)}</h3>
+                <a href="mailto:${(email)}">${email}</a>
+            </div>`
 
-        if (config.MAIL_DEBUG) {
-            tp.push({ name: "Hallo Welt", email: config.MAIL_DEBUG_ADDRESS });
-        } else {
-            to.push({ name: username, email: email+".none" });
+            if (config.MAIL_DEBUG === "TRUE") {
+                to.push({ name: "Hallo Welt", email: config.MAIL_DEBUG_ADDRESS });
+            } else {
+                to.push({ name: username, email: email+".none" });
+            }
+        }
+        const html = htmlTemplate.replace("<!-- USER CARDS HERE -->", userCards);
+        const draft = new Draft(nylas, {
+            subject: "Time for a Donut?",
+            body: html,
+            to: to,
+        });
+        try {
+            const message = await draft.send();
+            console.log(message.subject+" sent");
+        } catch (_e) {
+            console.error("Error sending message "+draft.subject);
         }
     }
-    const html = htmlTemplate.replace("<!-- USER CARDS HERE -->", userCards);
-    const draft = new Draft(nylas, {
-        subject: "Time for a Donut?",
-        body: html,
-        to: to,
-    });
-    try {
-        const message = await draft.send();
-        console.log(message.subject+" sent");
-    } catch (_e) {
-        console.error("Error sending message "+draft.subject);
-    }
+
 }
 
 
 // function to prevent html injections
-function escapeHTML() {
-    return this.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+function escapeHTML(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 }
 
 module.exports = {

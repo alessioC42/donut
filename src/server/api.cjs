@@ -8,7 +8,9 @@ const {
     getWorkSpacePersonsByPage,
     getPersonWorkspaceRelations,
     updatePersonByID,
-    updateAllPersonWorkspaceRelations
+    updateAllPersonWorkspaceRelations,
+    registerDonut,
+    getDonutsForWorkspaceByPage,
 } = require("./database/database.cjs");
 
 
@@ -91,18 +93,22 @@ api.get("/workspace/random", (req, res) => {
     res.send(randomTeamNames[Math.floor(Math.random() * randomTeamNames.length)]);
 });
 
-api.get("/workspaces/match/:id", async (req, res)  => {
+api.get("/workspace/matches/:id", (req, res) => {
+    const { itemsPerPage, page } = req.query;
+    res.json(getDonutsForWorkspaceByPage(req.params.id, itemsPerPage, page));
+});
+
+api.post("/workspaces/match/:id", async (req, res)  => {
     const matches = matchAll(req.params.id);
     for (const match of matches) {
         try {
             await sendMail(match);
+            registerDonut(match, req.params.id);
         } catch (e) {
             console.error(e);
         }
-
     }
 
     res.json(matches);
 });
-
 module.exports = api;

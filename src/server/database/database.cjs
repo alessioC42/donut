@@ -33,6 +33,8 @@ const querys = {
     "getWorkSpacePersonsByPage": db.prepare("SELECT Persons.*, Person_in_workspace.is_paused FROM Person_in_workspace LEFT JOIN Persons ON Person_in_workspace.person = Persons.id WHERE Person_in_workspace.workspace = $id LIMIT $resultsPerPage OFFSET $offset"),
     "getWorkSpacePersonsCount": db.prepare("SELECT COUNT(*) FROM Person_in_workspace WHERE workspace = $id"),
     "addOrUpdatePersonWorkspaceRelation": db.prepare("INSERT OR REPLACE INTO Person_in_workspace (person, workspace, is_paused) VALUES ($person, $workspace, $is_paused);"),
+    "getDonutsForWorkspaceByPage": db.prepare(`SELECT M.id AS match_id, P0.username AS person0_username, P0.first_name AS person0_first_name, P0.second_name AS person0_last_name, P1.username AS person1_username, P1.first_name AS person1_first_name, P1.second_name AS person1_last_name, P2.username AS person2_username, P2.first_name AS person2_first_name, P2.second_name AS person2_last_name, M.created_at, M.workspace FROM Matches M JOIN Persons P0 ON M.person0 = P0.id JOIN Persons P1 ON M.person1 = P1.id LEFT JOIN Persons P2 ON M.person2 = P2.id WHERE M.workspace = $workspace ORDER BY M.id DESC LIMIT $resultsPerPage OFFSET $offset;`),
+    "getDonutsForWorkspaceCount": db.prepare("SELECT COUNT(*) FROM Matches WHERE workspace=$workspace"),
     "deletePersonWorkspaceRelation": db.prepare("DELETE FROM Person_in_workspace WHERE person=$person AND workspace=$workspace"),
 }
 
@@ -104,6 +106,35 @@ function getPersonWorkspaceRelations(id) {
     return querys["getPersonWorkspaceRelations"].all({id});
 }
 
+
+function registerDonut(match, workspace) {
+    const sql2 = "INSERT INTO Matches (person0, person1, workspace, created_at) VALUES ($person1, $person2, $workspace, $created_at)";
+    const sql3 = "INSERT INTO Matches (person0, person1, person2, workspace, created_at) VALUES ($person1, $person2, $person3, $workspace, $created_at)";
+
+    const query2 = db.prepare(sql2);
+    const query3 = db.prepare(sql3);
+
+    if (match.length === 2) {
+        const [person1, person2] = match;
+
+        return query2.run({person1: person1.id, person2: person2.id, workspace, created_at: getDate()});
+    } else if (match.length === 3) {
+        console.log("MATCH WITH 3")
+        const [person1, person2, person3] = match;
+        return query3.run({person1: person1.id, person2: person2.id, person3: person3.id, workspace, created_at: getDate()});
+    } else {
+        throw new Error("Invalid match length");
+    }
+}
+
+function getDonutsForWorkspaceByPage(workspace, resultsPerPage, page) {
+    const offset = (page - 1) * resultsPerPage;
+    const results = querys["getDonutsForWorkspaceByPage"].all({workspace, resultsPerPage, offset});
+    const count = querys["getDonutsForWorkspaceCount"].get({workspace});
+
+    return {results, count: count["COUNT(*)"]};
+}
+
 module.exports = {
     addPerson,
     getPersonByID,
@@ -115,5 +146,7 @@ module.exports = {
     getPersonWorkspaceRelations,
     updatePersonByID,
     updateAllPersonWorkspaceRelations,
-    getWorkSpacePersons
+    getWorkSpacePersons,
+    registerDonut,
+    getDonutsForWorkspaceByPage
 }
