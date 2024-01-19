@@ -1,4 +1,5 @@
 const path = require('path');
+const bcrypt = require('bcrypt');
 
 
 const db = require('better-sqlite3')(path.join(__dirname, "/database.db"), {fileMustExist: true});
@@ -41,6 +42,10 @@ const querys = {
     "deleteAllMatchesWithPerson": db.prepare("DELETE FROM Matches WHERE person0=$person OR person1=$person OR person2=$person"),
     "deleteDonutsOfWorkspaceByID": db.prepare("DELETE FROM Matches WHERE workspace=$workspace"),
     "deleteWorkSpaceByID": db.prepare("DELETE FROM Workspaces WHERE id=$workspace"),
+
+    "getAccountbyusername": db.prepare("SELECT * FROM Accounts WHERE username=$username"),
+    "createAccount": db.prepare("INSERT INTO Accounts (username, password, created_at) VALUES ($username, $password, $created_at)"),
+    "deleteAccount": db.prepare("DELETE FROM Accounts WHERE username=$username AND password=$password"),
 }
 
 function getDate() {
@@ -168,6 +173,27 @@ function escapeSQL(str) {
     return str.replace(/'/g, "");
 }
 
+async function isValidAccount(username, password) {
+    // TODO: get the user from your user database
+    const user = querys["getAccountbyusername"].get({username});
+
+    if (!user) {
+        return false;
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+
+    return match;
+}
+
+function createAccount(username, passwordHash) {
+    return querys["createAccount"].run({username, password: passwordHash, created_at: getDate()});
+}
+
+function deleteAccount(username, passwordHash) {
+    return querys["deleteAccount"].run({username, password: passwordHash});
+}
+
 module.exports = {
     addPerson,
     getPersonByID,
@@ -183,5 +209,8 @@ module.exports = {
     registerDonut,
     getDonutsForWorkspaceByPage,
     deleteDonutsOfWorkspaceByID,
-    deleteWorkSpaceByID
+    deleteWorkSpaceByID,
+    isValidAccount,
+    createAccount,
+    deleteAccount
 }

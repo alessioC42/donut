@@ -13,21 +13,54 @@ const {
     getDonutsForWorkspaceByPage,
     deleteDonutsOfWorkspaceByID,
     deleteWorkSpaceByID,
+    isValidAccount,
+    createAccount,
+    deleteAccount
 } = require("./database/database.cjs");
 
 
 
 const fs = require("fs");
 const path = require("path");
+const jwt = require('jsonwebtoken');
+var { expressjwt: e_jwt } = require("express-jwt");const bcrypt = require("bcrypt");
+const config = require("../config.json");
 const { Router } = require("express");
 const {matchAll} = require("./matcher/matcher.cjs");
 const {sendMail} = require("./mailer/mailer.cjs");
-const api = Router();
+
 
 //load all random generated names from file
 const randomTeamNames = fs.readFileSync(path.join(__dirname, "./randomWorkspaces/randomWorkspaces.txt"), "utf-8").split("\n");
 
+const api = Router();
+
 api.use(require('body-parser').urlencoded({ extended: true }));
+
+api.use(
+    e_jwt({
+        secret: config.secret,
+        algorithms: ["HS256"],
+    }).unless({ path: ["/api/login"] })
+);
+
+
+api.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    console.log(username, password);
+
+    const passwordHash = await hashPassword(password);
+
+    if (!isValidAccount(username, passwordHash)) {
+        res.status(401).json({ message: "Invalid credentials" });
+    } else {
+        const token = jwt.sign({ username }, config.secret, { expiresIn: '1h' });
+
+        res.json({ token });
+    }
+
+});
 
 api.post("/person/create", (req, res) => {
     const { username, first_name, second_name, email } = req.body;
@@ -121,5 +154,31 @@ api.delete("/workspaces/donuts/delete/:id", (req, res) => {
 api.delete("/workspaces/delete/:id", (req, res) => {
     res.json(deleteWorkSpaceByID(req.params.id));
 });
+
+async function hashPassword(password) {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    return hashedPassword
+}
+
+api.post("/register", async (req, res) => {
+    const { username, password } = req.body;
+
+    const passwordHash = await hashPassword(password);
+
+    const result = createAccount(username, passwordHash);
+
+    res.json({result});
+});
+
+api.delete("/account/delete", async (req, res) => {
+    const { username, password } = req.body;
+
+    const passwordHash = await hashPassword(password);
+
+    const result = deleteAccount(username, passwordHash);
+
+    res.json({result});
+});
+
 
 module.exports = api;

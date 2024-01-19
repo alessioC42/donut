@@ -11,11 +11,13 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "bcrypt": "^5.1.1",
     "better-sqlite3": "^9.2.2",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
+    "express-jwt": "^8.4.1",
     "material-design-icons-iconfont": "^6.7.0",
     "nylas": "^6.11.0",
     "vue": "^3.4.13",
