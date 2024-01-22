@@ -19,7 +19,9 @@ import ManagePerson from "./views/persons/ManagePerson.vue";
 import Login from "./views/login/Login.vue";
 import AdminsOverview from "./views/admins/AdminsOverview.vue";
 import CreateAdmin from "./views/admins/CreateAdmin.vue";
-import ConfigureCron from "./views/cron/ConfigureCron.vue";
+
+import '@vue-js-cron/vuetify/dist/vuetify.css'
+import CronVuetifyPlugin from '@vue-js-cron/vuetify'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -35,7 +37,6 @@ const router = createRouter({
         { path: "/workspaces/new", component: CreateWorkspace},
         { path: "/admins", component: AdminsOverview },
         { path: "/admins/new", component: CreateAdmin },
-        { path: "/cron", component: ConfigureCron}
     ]
 });
 
@@ -55,6 +56,7 @@ window.fetch = async (url, options = {}) => {
     options.headers = {
         ...options.headers,
         'Authorization': 'Bearer ' + token,
+        'Cache-Control': 'no-cache', // Disable caching
     };
 
     // Call the original fetch function with the modified options
@@ -71,4 +73,5 @@ window.fetch = async (url, options = {}) => {
 const app = createApp(App);
 app.use(router);
 app.use(vuetify);
+app.use(CronVuetifyPlugin);
 app.mount('#app');

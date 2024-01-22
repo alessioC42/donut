@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "@vue-js-cron/vuetify": "^4.1.2",
     "bcrypt": "^5.1.1",
     "better-sqlite3": "^9.2.2",
     "body-parser": "^1.20.2",

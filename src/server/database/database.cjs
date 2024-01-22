@@ -48,6 +48,7 @@ const querys = {
     "getAccountsCount": db.prepare("SELECT COUNT(*) FROM Accounts"),
     "createAccount": db.prepare("INSERT INTO Accounts (username, password, created_at) VALUES ($username, $password, $created_at)"),
     "deleteAccount": db.prepare("DELETE FROM Accounts WHERE username=$username"),
+    "updateCron": db.prepare("UPDATE Workspaces SET cron=$cron, use_cron=$use_cron WHERE id=$workspace")
 }
 
 function getDate() {
@@ -210,6 +211,10 @@ function getAccountsByPage(itemsPerPage, page) {
     };
 }
 
+function updateCron(workspace, cron, use_cron) {
+    return querys["updateCron"].run({workspace, cron, use_cron});
+}
+
 
 module.exports = {
     addPerson,
@@ -230,5 +235,6 @@ module.exports = {
     isValidAccount,
     createAccount,
     deleteAccount,
-    getAccountsByPage
+    getAccountsByPage,
+    updateCron
 }

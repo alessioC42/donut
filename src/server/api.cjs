@@ -17,6 +17,7 @@ const {
     createAccount,
     deleteAccount,
     getAccountsByPage,
+    updateCron
 } = require("./database/database.cjs");
 
 
@@ -157,10 +158,9 @@ api.delete("/workspaces/delete/:id", (req, res) => {
     res.json(deleteWorkSpaceByID(req.params.id));
 });
 
-async function hashPassword(password) {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    return hashedPassword
-}
+api.post("/workspaces/cron/update/:id", (req, res) => {
+    res.json(updateCron(req.params.id, req.body["?cron"], req.body["use_cron"]));
+});
 
 api.get("/accounts", (req, res) => {
     const { itemsPerPage, page } = req.query;
@@ -183,5 +183,9 @@ api.delete("/account/delete/:username", async (req, res) => {
     res.json({result});
 });
 
+async function hashPassword(password) {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    return hashedPassword
+}
 
 module.exports = api;
