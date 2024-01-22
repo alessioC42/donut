@@ -15,7 +15,8 @@ const {
     deleteWorkSpaceByID,
     isValidAccount,
     createAccount,
-    deleteAccount
+    deleteAccount,
+    getAccountsByPage,
 } = require("./database/database.cjs");
 
 
@@ -23,6 +24,7 @@ const {
 const fs = require("fs");
 const path = require("path");
 const jwt = require('jsonwebtoken');
+const cors = require("cors");
 var { expressjwt: e_jwt } = require("express-jwt");const bcrypt = require("bcrypt");
 const config = require("../config.json");
 const { Router } = require("express");
@@ -45,14 +47,14 @@ api.use(
 );
 
 
-api.post('/login', async (req, res) => {
+api.post('/login', cors(), async (req, res) => {
     const { username, password } = req.body;
 
-    console.log(username, password);
 
-    const passwordHash = await hashPassword(password);
+    const isValid = await isValidAccount(username, password);
+    console.log(isValid);
 
-    if (!isValidAccount(username, passwordHash)) {
+    if (!isValid) {
         res.status(401).json({ message: "Invalid credentials" });
     } else {
         const token = jwt.sign({ username }, config.secret, { expiresIn: '1h' });
@@ -160,6 +162,11 @@ async function hashPassword(password) {
     return hashedPassword
 }
 
+api.get("/accounts", (req, res) => {
+    const { itemsPerPage, page } = req.query;
+    res.json(getAccountsByPage(itemsPerPage, page));
+});
+
 api.post("/register", async (req, res) => {
     const { username, password } = req.body;
 
@@ -170,13 +177,9 @@ api.post("/register", async (req, res) => {
     res.json({result});
 });
 
-api.delete("/account/delete", async (req, res) => {
-    const { username, password } = req.body;
-
-    const passwordHash = await hashPassword(password);
-
-    const result = deleteAccount(username, passwordHash);
-
+api.delete("/account/delete/:username", async (req, res) => {
+    const { username } = req.params;
+    const result = deleteAccount(username);
     res.json({result});
 });
 

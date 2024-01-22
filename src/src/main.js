@@ -16,11 +16,16 @@ import AllWorkspacesOverview from './views/workspaces/AllWorkspacesOverview.vue'
 import CreateWorkspace from './views/workspaces/CreateworkSpace.vue';
 import WorkspaceOverview from './views/workspaces/WorkspaceOverview.vue';
 import ManagePerson from "./views/persons/ManagePerson.vue";
+import Login from "./views/login/Login.vue";
+import AdminsOverview from "./views/admins/AdminsOverview.vue";
+import CreateAdmin from "./views/admins/CreateAdmin.vue";
+import ConfigureCron from "./views/cron/ConfigureCron.vue";
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
         { path: "/",  component: Home },
+        { path: "/login",  component: Login},
         { path: "/home",  component: Home },
         { path: "/persons", component: PersonsOverview},
         { path: "/persons/new", component: CreateUser },
@@ -28,6 +33,9 @@ const router = createRouter({
         { path: "/workspaces", component: AllWorkspacesOverview},
         { path: "/workspaces/:id", component: WorkspaceOverview},
         { path: "/workspaces/new", component: CreateWorkspace},
+        { path: "/admins", component: AdminsOverview },
+        { path: "/admins/new", component: CreateAdmin },
+        { path: "/cron", component: ConfigureCron}
     ]
 });
 
@@ -36,6 +44,29 @@ const vuetify = createVuetify({
     components,
     directives,
 });
+
+// Save the original fetch function
+const originalFetch = window.fetch;
+
+window.fetch = async (url, options = {}) => {
+    const token = localStorage.getItem("token");
+
+    // Add the authorization header
+    options.headers = {
+        ...options.headers,
+        'Authorization': 'Bearer ' + token,
+    };
+
+    // Call the original fetch function with the modified options
+    const response = await originalFetch(url, options);
+
+    if (response.status === 401) {
+        // Unauthorized, so redirect to the login page
+        router.push('/login');
+    }
+
+    return response;
+};
 
 const app = createApp(App);
 app.use(router);

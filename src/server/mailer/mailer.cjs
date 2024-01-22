@@ -35,7 +35,7 @@ async function sendMail(match) {
             if (config.MAIL_DEBUG === "TRUE") {
                 to.push({ name: "Hallo Welt", email: config.MAIL_DEBUG_ADDRESS });
             } else {
-                to.push({ name: username, email: email+".none" });
+                to.push({ name: username, email: email+".debug" });
             }
         }
         const html = htmlTemplate.replace("<!-- USER CARDS HERE -->", userCards);

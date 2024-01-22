@@ -44,8 +44,10 @@ const querys = {
     "deleteWorkSpaceByID": db.prepare("DELETE FROM Workspaces WHERE id=$workspace"),
 
     "getAccountbyusername": db.prepare("SELECT * FROM Accounts WHERE username=$username"),
+    "getAccountsByPage": db.prepare("SELECT id, username, created_at FROM Accounts LIMIT $itemsPerPage OFFSET $offset"),
+    "getAccountsCount": db.prepare("SELECT COUNT(*) FROM Accounts"),
     "createAccount": db.prepare("INSERT INTO Accounts (username, password, created_at) VALUES ($username, $password, $created_at)"),
-    "deleteAccount": db.prepare("DELETE FROM Accounts WHERE username=$username AND password=$password"),
+    "deleteAccount": db.prepare("DELETE FROM Accounts WHERE username=$username"),
 }
 
 function getDate() {
@@ -174,25 +176,40 @@ function escapeSQL(str) {
 }
 
 async function isValidAccount(username, password) {
-    // TODO: get the user from your user database
     const user = querys["getAccountbyusername"].get({username});
+
+    console.log(user);
 
     if (!user) {
         return false;
     }
 
-    const match = await bcrypt.compare(password, user.password);
-
-    return match;
+    try {
+        const match = await bcrypt.compare(password, user.password);
+        return match;
+    } catch (error) {
+        console.error(`Error comparing passwords: ${error}`);
+        return false;
+    }
 }
 
 function createAccount(username, passwordHash) {
     return querys["createAccount"].run({username, password: passwordHash, created_at: getDate()});
 }
 
-function deleteAccount(username, passwordHash) {
-    return querys["deleteAccount"].run({username, password: passwordHash});
+function deleteAccount(username) {
+    console.info(`Deleting account ${username}`)
+    return querys["deleteAccount"].run({username});
 }
+
+function getAccountsByPage(itemsPerPage, page) {
+    const offset = (page - 1) * itemsPerPage;
+    return {
+        results: querys["getAccountsByPage"].all({itemsPerPage, offset}),
+        count: querys["getAccountsCount"].get()["COUNT(*)"]
+    };
+}
+
 
 module.exports = {
     addPerson,
@@ -212,5 +229,6 @@ module.exports = {
     deleteWorkSpaceByID,
     isValidAccount,
     createAccount,
-    deleteAccount
+    deleteAccount,
+    getAccountsByPage
 }
